@@ -1,28 +1,43 @@
 #!/bin/bash
 
-# Actualiza el sistema
-sudo apt update
+# Comprobar si Docker ya está instalado
+if ! [ -x "$(command -v docker)" ]; then
+  echo "Docker no está instalado. Procediendo con la instalación..."
+  
+  # Actualiza el sistema
+  sudo apt update
 
-# Instala paquetes necesarios para permitir que apt utilice repositorios HTTPS
-sudo apt install apt-transport-https ca-certificates curl software-properties-common -y
+  # Instala paquetes necesarios para permitir que apt utilice repositorios HTTPS
+  sudo apt install apt-transport-https ca-certificates curl software-properties-common -y
 
-# Añade la clave GPG del repositorio oficial de Docker
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  # Añade la clave GPG del repositorio oficial de Docker
+  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 
-# Añade el repositorio de Docker a las fuentes de apt
-sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
+  # Añade el repositorio de Docker a las fuentes de apt
+  sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
 
-# Actualiza el sistema nuevamente para que apt reconozca el nuevo repositorio
-sudo apt update
+  # Actualiza el sistema nuevamente para que apt reconozca el nuevo repositorio
+  sudo apt update
 
-# Asegurarse de que el punto de instalación de Docker esté disponible
-apt-cache policy docker-ce
+  # Asegurarse de que el punto de instalación de Docker esté disponible
+  apt-cache policy docker-ce
 
-# Instalar Docker
-sudo apt install docker-ce -y
+  # Instalar Docker
+  sudo apt install docker-ce -y
 
-# Descargar la imagen de MongoDB 8.0
-sudo docker pull mongo:8.0
+  echo "Docker se ha instalado correctamente."
+
+else
+  echo "Docker ya está instalado. Saltando la instalación."
+fi
+
+# Descargar la imagen de MongoDB 8.0 si no está descargada
+if [[ "$(sudo docker images -q mongo:8.0 2> /dev/null)" == "" ]]; then
+  echo "Descargando la imagen de MongoDB 8.0..."
+  sudo docker pull mongo:8.0
+else
+  echo "La imagen de MongoDB 8.0 ya está descargada."
+fi
 
 # Preguntar al usuario la ruta donde quiere guardar los datos de MongoDB
 echo "Por favor, introduce la ruta donde deseas almacenar los datos de MongoDB (ejemplo: /home/usuario/mongo_folder):"
