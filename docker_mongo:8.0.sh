@@ -69,3 +69,4 @@ sudo docker run -d -p "$mongo_port":27017 -v "$mongo_data_path":/data/db --name 
 # Confirmación de que el contenedor se está ejecutando
 echo "MongoDB se está ejecutando en el puerto: $mongo_port y los datos se almacenan en: $mongo_data_path"
 echo "Nombre del contenedor: $mongo_container_name"
+sudo docker exec -it $mongo_container_name bash
