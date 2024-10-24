@@ -34,9 +34,23 @@ if [ ! -d "$mongo_data_path" ]; then
     mkdir -p "$mongo_data_path"
 fi
 
-# Crear un contenedor de MongoDB en segundo plano (-d) en el puerto 2717 (mapeando a 27017 en el contenedor por defecto)
-# Los datos se guardarán en la ruta indicada por el usuario.
-sudo docker run -d -p 2717:27017 -v "$mongo_data_path":/data/db --name mymongo mongo:8.0
+# Preguntar el puerto que desea utilizar (por defecto 2717)
+echo "Por favor, introduce el puerto que deseas usar para MongoDB (por defecto: 2717):"
+read -r mongo_port
+
+# Asignar el puerto predeterminado si el usuario no ingresa uno
+mongo_port=${mongo_port:-2717}
+
+# Preguntar el nombre del contenedor (por defecto 'mymongo')
+echo "Por favor, introduce el nombre del contenedor de MongoDB (por defecto: mymongo):"
+read -r mongo_container_name
+
+# Asignar el nombre predeterminado si el usuario no ingresa uno
+mongo_container_name=${mongo_container_name:-mymongo}
+
+# Crear el contenedor de MongoDB con los parámetros proporcionados
+sudo docker run -d -p "$mongo_port":27017 -v "$mongo_data_path":/data/db --name "$mongo_container_name" mongo:8.0
 
 # Confirmación de que el contenedor se está ejecutando
-echo "MongoDB se está ejecutando y los datos se almacenan en: $mongo_data_path"
+echo "MongoDB se está ejecutando en el puerto: $mongo_port y los datos se almacenan en: $mongo_data_path"
+echo "Nombre del contenedor: $mongo_container_name"
